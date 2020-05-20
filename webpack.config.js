@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development', // "production" | "development" | "none"  // Chosen mode tells webpack to use its built-in optimizations accordingly.
-
+  devtool: 'inline-source-map',
   entry: './src/index', // string | object | array  // 这里应用程序开始执行
   // webpack 开始打包
   output: {
@@ -14,7 +14,12 @@ module.exports = {
     filename: 'bundle.js', // string    // 「入口分块(entry chunk)」的文件名模板（出口分块？）
     publicPath: '', // string    // 输出解析文件的目录，url 相对于 HTML 页面
   },
-
+  devServer: {
+    // contentBase: path.join(__dirname, 'dist'),
+    publicPath: '/',
+    compress: true,
+    port: 9000
+  },
   module: {
     rules: [
       {
@@ -26,12 +31,29 @@ module.exports = {
         resolve: {
           extensions: ['.js', '.jsx']
         }
+      },
+      {
+        test: /\.scss$/,
+        exclude: /(node_modules)/,
+        use: [{
+          loader: 'style-loader'
+        }, {
+          loader: 'css-loader'
+        }, {
+          loader: 'sass-loader',
+          options: {
+            sassOptions:{
+              includePaths: [path.join(__dirname, 'src')]
+            }
+          }
+        }
+        ]
       }
     ]
   },
   plugins: [new HtmlWebpackPlugin({
     title: '家庭相册',
-    template: './src/template/h5.html',
+    template: './template/h5.html',
     'meta': {
       'viewport': 'width=device-width, initial-scale=1, shrink-to-fit=no',
       'theme-color': '#4285f4'
